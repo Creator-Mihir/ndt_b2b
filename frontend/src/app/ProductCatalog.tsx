@@ -325,13 +325,24 @@ export default function ProductCatalog() {
                     }
                   }
                   
-                  // Check if product is in cart
-                  const existingItem = cartList.find((item: any) => item.product._id === product._id);
+                  // Check if product is in cart (supporting both string ID or old object format)
+                  const existingItem = cartList.find((item: any) => {
+                    const itemId = typeof item.product === 'object' ? item.product._id : item.product;
+                    return itemId === product._id;
+                  });
+                  
                   if (existingItem) {
                     existingItem.quantity += 1;
                   } else {
                     cartList.push({
-                      product: product,
+                      product: product._id,
+                      name: product.name,
+                      sku: product.sku,
+                      slug: product.slug,
+                      category: product.category,
+                      basePrice: product.basePrice,
+                      tieredPrices: product.tieredPrices,
+                      image: product.images[0] || '',
                       quantity: 1
                     });
                   }

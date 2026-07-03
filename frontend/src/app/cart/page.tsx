@@ -101,7 +101,27 @@ export default function CartPage() {
       try {
         const cartRaw = localStorage.getItem('conex_cart');
         if (cartRaw) {
-          setCartItems(JSON.parse(cartRaw));
+          const parsed = JSON.parse(cartRaw);
+          const normalized = parsed.map((item: any) => {
+            if (item && item.product && typeof item.product === 'object') {
+              // Self-heal old format item to the expected structure
+              const p = item.product;
+              return {
+                product: p._id,
+                name: p.name,
+                sku: p.sku,
+                slug: p.slug,
+                category: p.category,
+                basePrice: p.basePrice,
+                tieredPrices: p.tieredPrices,
+                image: p.images?.[0] || '',
+                quantity: item.quantity || 1
+              };
+            }
+            return item;
+          });
+          setCartItems(normalized);
+          localStorage.setItem('conex_cart', JSON.stringify(normalized));
         }
 
         // Load Auth User
