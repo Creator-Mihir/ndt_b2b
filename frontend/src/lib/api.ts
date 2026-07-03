@@ -151,5 +151,83 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify({ status, token: guestToken }),
     });
+  },
+
+  // Auth & Profile APIs
+  async login(credentials: { email: string; password?: string }): Promise<{ status: string; token: string; data: { user: any } }> {
+    return request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+  },
+
+  async signup(details: { name: string; email: string; password?: string; phone?: string; companyName?: string; gstin?: string }): Promise<{ status: string; token: string; data: { user: any } }> {
+    return request('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify(details),
+    });
+  },
+
+  async getMe(): Promise<{ status: string; data: { user: any } }> {
+    return request('/auth/me', { method: 'GET' });
+  },
+
+  async updateProfile(details: { name?: string; phone?: string; companyName?: string; gstin?: string }): Promise<{ status: string; data: { user: any } }> {
+    return request('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(details),
+    });
+  },
+
+  async addAddress(address: { street: string; city: string; state: string; postalCode: string; country?: string; isDefault?: boolean }): Promise<{ status: string; data: { user: any } }> {
+    return request('/auth/addresses', {
+      method: 'POST',
+      body: JSON.stringify(address),
+    });
+  },
+
+  async updateAddress(index: number, address: { street?: string; city?: string; state?: string; postalCode?: string; country?: string; isDefault?: boolean }): Promise<{ status: string; data: { user: any } }> {
+    return request(`/auth/addresses/${index}`, {
+      method: 'PUT',
+      body: JSON.stringify(address),
+    });
+  },
+
+  async deleteAddress(index: number): Promise<{ status: string; data: { user: any } }> {
+    return request(`/auth/addresses/${index}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Admin APIs
+  async getAllQuotes(): Promise<{ status: string; results: number; data: { quotes: IQuote[] } }> {
+    return request('/quotes', { method: 'GET' });
+  },
+
+  async respondToQuote(quoteId: string, responseData: { offeredPrices: Record<string, number>; adminFeedback?: string }): Promise<{ status: string; data: { quote: IQuote } }> {
+    return request(`/quotes/${quoteId}/respond`, {
+      method: 'PUT',
+      body: JSON.stringify(responseData),
+    });
+  },
+
+  async createProduct(productData: any): Promise<{ status: string; data: { product: IProduct } }> {
+    return request('/products', {
+      method: 'POST',
+      body: JSON.stringify(productData),
+    });
+  },
+
+  async updateProduct(id: string, productData: any): Promise<{ status: string; data: { product: IProduct } }> {
+    return request(`/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(productData),
+    });
+  },
+
+  async deleteProduct(id: string): Promise<{ status: string }> {
+    return request(`/products/${id}`, {
+      method: 'DELETE',
+    });
   }
 };

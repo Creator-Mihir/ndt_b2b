@@ -10,7 +10,7 @@ export default function Header() {
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [cartCount, setCartCount] = useState(0);
 
   // Sync state with url query params
@@ -166,13 +166,34 @@ export default function Header() {
           {/* Authentication Badge */}
           {user ? (
             <div className="flex items-center gap-3">
-              <Link 
-                href="/dashboard" 
-                className="hidden lg:flex flex-col text-right cursor-pointer group"
-              >
-                <span className="text-xs font-semibold group-hover:text-primary transition-colors">{user.name}</span>
-                <span className="text-[10px] text-muted leading-none">Customer Portal</span>
-              </Link>
+              {user.role === 'admin' ? (
+                <>
+                  <Link 
+                    href="/admin" 
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 transition-all shadow-sm"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                    <span>Admin Portal</span>
+                  </Link>
+                  <Link 
+                    href="/admin" 
+                    className="hidden lg:flex flex-col text-right cursor-pointer group"
+                  >
+                    <span className="text-xs font-semibold group-hover:text-primary transition-colors">{user.name}</span>
+                    <span className="text-[10px] text-rose-500 font-semibold leading-none">System Admin</span>
+                  </Link>
+                </>
+              ) : (
+                <Link 
+                  href="/dashboard" 
+                  className="hidden lg:flex flex-col text-right cursor-pointer group"
+                >
+                  <span className="text-xs font-semibold group-hover:text-primary transition-colors">{user.name}</span>
+                  <span className="text-[10px] text-muted leading-none">Customer Portal</span>
+                </Link>
+              )}
               <button
                 onClick={handleLogout}
                 className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted-background transition-all"

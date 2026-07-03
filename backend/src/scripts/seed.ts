@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import path from 'path';
 import { Product } from '../models/product';
+import { User } from '../models/user';
 
 // Load env variables
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
@@ -194,6 +195,23 @@ async function seedDatabase() {
     console.log('Inserting seed products...');
     const inserted = await Product.insertMany(seedProducts);
     console.log(`Successfully seeded ${inserted.length} products! 🌱`);
+
+    // Seed Admin User
+    console.log('Checking for default admin user...');
+    const adminExists = await User.findOne({ email: 'admin@conex.in' });
+    if (!adminExists) {
+      console.log('Creating default admin user...');
+      await User.create({
+        name: 'System Admin',
+        email: 'admin@conex.in',
+        password: 'adminpassword123',
+        role: 'admin',
+        pricingTier: 'tier_1'
+      });
+      console.log('Admin user created successfully.');
+    } else {
+      console.log('Admin user already exists.');
+    }
 
   } catch (error) {
     console.error('Seeding process encountered an error:', error);
