@@ -80,7 +80,7 @@ export const getMyQuotes = async (req: Request, res: Response, next: NextFunctio
 };
 
 // 3. Fetch all quote requests (Admin Only)
-export const getAllQuotes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getAllQuotes = async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const quotes = await QuoteRequest.find()
       .populate('customer', 'name email phone companyName gstin')

@@ -198,17 +198,26 @@ async function seedDatabase() {
 
     // Seed Admin User
     console.log('Checking for default admin user...');
-    const adminExists = await User.findOne({ email: 'admin@conex.in' });
+    
+    const isProduction = process.env.NODE_ENV === 'production';
+    const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@conex.in';
+    const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+
+    const adminExists = await User.findOne({ email: adminEmail });
     if (!adminExists) {
-      console.log('Creating default admin user...');
-      await User.create({
-        name: 'System Admin',
-        email: 'admin@conex.in',
-        password: 'adminpassword123',
-        role: 'admin',
-        pricingTier: 'tier_1'
-      });
-      console.log('Admin user created successfully.');
+      if (isProduction && !adminPassword) {
+        console.warn('WARNING: SEED_ADMIN_PASSWORD is not set in production. Skipping admin user creation for security reasons.');
+      } else {
+        console.log(`Creating admin user (${adminEmail})...`);
+        await User.create({
+          name: 'System Admin',
+          email: adminEmail,
+          password: adminPassword || 'adminpassword123',
+          role: 'admin',
+          pricingTier: 'tier_1'
+        });
+        console.log('Admin user created successfully.');
+      }
     } else {
       console.log('Admin user already exists.');
     }

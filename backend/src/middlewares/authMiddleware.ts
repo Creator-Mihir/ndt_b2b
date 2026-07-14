@@ -17,6 +17,17 @@ export interface DecodedToken {
   exp: number;
 }
 
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('CRITICAL SECURITY ERROR: JWT_SECRET is missing in production environment variables.');
+    }
+    return 'supersecretjwtkeychangeinproduction';
+  }
+  return secret;
+};
+
 export const protect = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     let token: string | undefined;
@@ -37,7 +48,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction): 
     // Verify token
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || 'supersecretjwtkeychangeinproduction'
+      getJwtSecret()
     ) as DecodedToken;
 
     // Check if user still exists
@@ -74,7 +85,7 @@ export const restrictTo = (...roles: ('customer' | 'admin')[]) => {
   };
 };
 
-export const optionalProtect = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const optionalProtect = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
   try {
     let token: string | undefined;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -84,7 +95,7 @@ export const optionalProtect = async (req: Request, res: Response, next: NextFun
     if (token) {
       const decoded = jwt.verify(
         token,
-        process.env.JWT_SECRET || 'supersecretjwtkeychangeinproduction'
+        getJwtSecret()
       ) as DecodedToken;
 
       const currentUser = await User.findById(decoded.id);
