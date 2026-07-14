@@ -4,7 +4,7 @@
   "description": "B2B Cable & NDT Online Shop Express API",
   "main": "dist/app.js",
   "scripts": {
-    "build": "tsc --showConfig",
+    "build": "tsc",
     "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "seed": "npx ts-node src/scripts/seed.ts",
